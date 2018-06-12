@@ -1,6 +1,7 @@
 package com.function.authentication;
 
 import com.function.model.User;
+import com.function.monad.Try;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,27 +36,14 @@ class Authenticator {
     }
 
     void login(String userName, String password, String email) throws MalformedURLException {
-        User user = null;
-        String target = LOG_IN;
+        redirect(new URL(getUrl(userName, password, email)));
+    }
 
-        try {
-            user = authenticateWithUsername(userName, password);
-        } catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
-            try {
-                user = authenticateWithEmail(email, password);
-            } catch (Exception ex2) {
-                System.out.println("Exception: " + ex2.getMessage());
-            }
-        }
-        if (user != null) {
-            try {
-                target = twoFactor(user, TWO_FACTOR_PWD);
-            } catch (Exception ex) {
-                System.out.println("Exception: " + ex.getMessage());
-            }
-        }
-        redirect(new URL(target));
+    String getUrl(String userName, String password, String email) {
+        return Try.with(() -> authenticateWithUsername(userName, password))
+                  .recover(e -> Try.with(() -> authenticateWithEmail(email, password)))
+                  .chain(user -> Try.with(() -> twoFactor(user, TWO_FACTOR_PWD)))
+                  .orElse(LOG_IN);
     }
 
     private void redirect(URL url) {
