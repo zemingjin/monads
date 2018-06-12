@@ -35,7 +35,7 @@ class Authenticator {
 
     void login(String userName, String password, String email) throws MalformedURLException {
         User user = null;
-        URL target;
+        String target;
 
         try {
             user = authenticateWithUsername(userName, password);
@@ -49,14 +49,14 @@ class Authenticator {
         if (user != null) {
             try {
                 twoFactor(user, TWO_FACTOR_PWD);
-                target = new URL(DASH_BOARD);
+                target = DASH_BOARD;
             } catch (Exception ex) {
-                target = new URL(LOG_IN);
+                target = LOG_IN;
             }
         } else {
-            target = new URL(LOG_IN);
+            target = LOG_IN;
         }
-        redirect(target);
+        redirect(new URL(target));
     }
 
     private void redirect(URL url) {
