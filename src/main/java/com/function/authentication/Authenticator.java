@@ -26,35 +26,34 @@ class Authenticator {
         throw new Exception("Authentication with Username/Password failed");
     }
 
-    private void twoFactor(User user, long twofPassword) throws Exception {
+    private String twoFactor(User user, long twofPassword) throws Exception {
         System.out.println("Inside twoFactor");
         if (user == null || twofPassword == 0) {
             throw new Exception("Invalid credentials for 2 way auth");
         }
+        return DASH_BOARD;
     }
 
     void login(String userName, String password, String email) throws MalformedURLException {
         User user = null;
-        String target;
+        String target = LOG_IN;
 
         try {
             user = authenticateWithUsername(userName, password);
         } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
             try {
                 user = authenticateWithEmail(email, password);
             } catch (Exception ex2) {
-                System.out.println(ex2.getMessage());
+                System.out.println("Exception: " + ex2.getMessage());
             }
         }
         if (user != null) {
             try {
-                twoFactor(user, TWO_FACTOR_PWD);
-                target = DASH_BOARD;
+                target = twoFactor(user, TWO_FACTOR_PWD);
             } catch (Exception ex) {
-                target = LOG_IN;
+                System.out.println("Exception: " + ex.getMessage());
             }
-        } else {
-            target = LOG_IN;
         }
         redirect(new URL(target));
     }
