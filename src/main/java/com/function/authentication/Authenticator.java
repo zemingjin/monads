@@ -5,7 +5,7 @@ import com.function.model.User;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class Authenticator {
+class Authenticator {
     private static final String DASH_BOARD = "https://com.company.com/dashboard";
     private static final String LOG_IN = "http://com.company.com/login";
     private static long TWO_FACTOR_PWD = 123456;
@@ -27,12 +27,13 @@ public class Authenticator {
     }
 
     private void twoFactor(User user, long twofPassword) throws Exception {
+        System.out.println("Inside twoFactor");
         if (user == null || twofPassword == 0) {
             throw new Exception("Invalid credentials for 2 way auth");
         }
     }
 
-    public void login(String userName, String password, String email) throws MalformedURLException {
+    void login(String userName, String password, String email) throws MalformedURLException {
         User user = null;
         URL target;
 
@@ -42,6 +43,7 @@ public class Authenticator {
             try {
                 user = authenticateWithEmail(email, password);
             } catch (Exception ex2) {
+                System.out.println(ex2.getMessage());
             }
         }
         if (user != null) {
@@ -61,7 +63,7 @@ public class Authenticator {
         System.out.println("Redirecting to " + url);
     }
 
-    public static void setTwoFactorPwd(long twoFactorPwd) {
+    static void setTwoFactorPwd(long twoFactorPwd) {
         TWO_FACTOR_PWD = twoFactorPwd;
     }
 }
