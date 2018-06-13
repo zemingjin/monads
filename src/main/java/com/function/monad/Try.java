@@ -1,13 +1,18 @@
 package com.function.monad;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class Try<T> {
     public static <T> Try<T> with(SupplierWithException<T, Exception> f) {
+        return with(f, e -> System.out.println("Exception: " + e.getMessage()));
+    }
+
+    public static <T> Try<T> with(SupplierWithException<T, Exception> f, Consumer<Exception> handler) {
         try {
             return new Success<>(f.get());
         } catch (Exception ex) {
-            System.out.println("Exception: " + ex.getMessage());
+            handler.accept(ex);
             return new Failure<>(ex);
         }
     }
