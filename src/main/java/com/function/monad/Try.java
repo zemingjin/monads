@@ -12,9 +12,9 @@ public abstract class Try<T> {
         }
     }
 
-    public abstract <U> Try<U> chain(Function<T, Try<U>> f);
-    public abstract Try<T> recover(Function<Exception, Try<T>> f);
-    public abstract <U> U orElse(U uTry);
+    public abstract <U> Try<U> flatMap(Function<T, Try<U>> f);
+    public abstract <U> Try<U> recover(Function<Exception, Try<U>> f);
+    public abstract T orElse(T defValue);
 
     public static class Success<T> extends Try<T> {
         final T value;
@@ -24,20 +24,20 @@ public abstract class Try<T> {
         }
 
         @Override
-        public <U> Try<U> chain(Function<T, Try<U>> f) {
+        public <U> Try<U> flatMap(Function<T, Try<U>> f) {
             return f.apply(value);
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public Try<T> recover(Function<Exception, Try<T>> f) {
-            return this;
+        public <U> Try<U> recover(Function<Exception, Try<U>> f) {
+            return (Try<U>)this;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public <U> U orElse(U uTry) {
-            return (U)value;
+        public T orElse(T defValue) {
+            return value;
         }
     }
 
@@ -50,18 +50,18 @@ public abstract class Try<T> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <U> Try<U> chain(Function<T, Try<U>> f) {
+        public <U> Try<U> flatMap(Function<T, Try<U>> f) {
             return (Try<U>)this;
         }
 
         @Override
-        public Try<T> recover(Function<Exception, Try<T>> f) {
+        public <U> Try<U> recover(Function<Exception, Try<U>> f) {
             return f.apply(e);
         }
 
         @Override
-        public <U> U orElse(U uTry) {
-            return uTry;
+        public T orElse(T defValue) {
+            return defValue;
         }
     }
 }

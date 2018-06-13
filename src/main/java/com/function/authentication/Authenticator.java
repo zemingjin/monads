@@ -42,7 +42,7 @@ class Authenticator {
     String getUrl(String userName, String password, String email) {
         return Try.with(() -> authenticateWithUsername(userName, password))
                   .recover(e -> Try.with(() -> authenticateWithEmail(email, password)))
-                  .chain(user -> Try.with(() -> twoFactor(user, TWO_FACTOR_PWD)))
+                  .flatMap(user -> Try.with(() -> twoFactor(user, TWO_FACTOR_PWD)))
                   .orElse(LOG_IN);
     }
 
