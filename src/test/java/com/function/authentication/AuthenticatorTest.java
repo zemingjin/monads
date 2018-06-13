@@ -14,7 +14,7 @@ public class AuthenticatorTest {
     private Authenticator authenticator = new Authenticator();
 
     @Test
-    public void testGetUrl() throws MalformedURLException {
+    public void test() throws MalformedURLException {
         authenticator.setTwoFactorPwd(DEF_TWOFACTOR_PWD);
         assertEquals(DASH_BOARD, authenticator.getUrl(MOCK_USERNAME, MOCK_PASSWORD, MOCK_EMAIL));
         assertEquals(DASH_BOARD, authenticator.getUrl(null, MOCK_PASSWORD, MOCK_EMAIL));
