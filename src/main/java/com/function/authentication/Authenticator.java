@@ -1,9 +1,11 @@
 package com.function.authentication;
 
 import com.function.model.User;
+import com.function.monad.Try;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Consumer;
 
 class Authenticator {
     static final String DASH_BOARD = "https://com.company.com/dashboard";
@@ -37,31 +39,13 @@ class Authenticator {
         redirect(new URL(getUrl(userName, password, email)));
     }
 
-    String getUrl(String userName, String password, String email) {
-        User user = null;
-        String target;
+    private static final Consumer<Exception> handler = e -> System.out.println("Exception: " + e.getMessage());
 
-        try {
-            user = authenticateWithUsername(userName, password);
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-            try {
-                user = authenticateWithEmail(email, password);
-            } catch (Exception e2) {
-                System.out.println("Exception: " + e2.getMessage());
-            }
-        }
-        if (user != null) {
-            try {
-                target = twoFactor(user, twoFactorPwd);
-            } catch (Exception e) {
-                System.out.println("Exception: " + e.getMessage());
-                target = LOG_IN;
-            }
-        } else {
-            target = LOG_IN;
-        }
-        return target;
+    String getUrl(String userName, String password, String email) {
+        return Try.with(() -> authenticateWithUsername(userName, password), handler)
+                  .recoverWith(e -> Try.with(() -> authenticateWithEmail(email, password), handler))
+                  .flatMap(user -> Try.with(() -> twoFactor(user, twoFactorPwd), handler))
+                  .orElse(LOG_IN);
     }
 
     private void redirect(URL url) {

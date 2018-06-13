@@ -9,17 +9,6 @@ import java.util.function.Function;
 public abstract class Try<T> {
     /**
      * Execute the given supplier function and store the result as the value of container.
-     * Default exception handler would be called if exception were thrown.
-     * @param supplier the given supplier function providing the value for the container.
-     * @param <T> the class of value
-     * @return Success&lt;T&gt; if the given supplier action was successful. Otherwise, a Failure&lt;T&gt;
-     */
-    public static <T> Try<T> with(SupplierWithException<T, Exception> supplier) {
-        return with(supplier, e -> System.out.println("Exception: " + e.getMessage()));
-    }
-
-    /**
-     * Execute the given supplier function and store the result as the value of container.
      * The given exception handler would be called if exception were thrown.
      * @param supplier the given supplier function providing the value for the container.
      * @param handler the given exception handler.
