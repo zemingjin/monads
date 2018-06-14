@@ -30,7 +30,7 @@ public abstract class Try<T> {
      * @param <U> The type parameter to the Try returned by
      * @return the result of applying the given mapping function to the value of this Try, if Success, otherwise Failure.
      */
-    public abstract <U> Try<U> flatMap(Function<T, Try<U>> mapper);
+    public abstract <U> Try<U> then(Function<T, Try<U>> mapper);
 
     /**
      * For Success, simply return Success itself. Otherwise, apply the given mapping function to it and return the result.
@@ -55,7 +55,7 @@ public abstract class Try<T> {
         }
 
         @Override
-        public <U> Try<U> flatMap(Function<T, Try<U>> mapper) {
+        public <U> Try<U> then(Function<T, Try<U>> mapper) {
             return mapper.apply(value);
         }
 
@@ -81,7 +81,7 @@ public abstract class Try<T> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <U> Try<U> flatMap(Function<T, Try<U>> mapper) {
+        public <U> Try<U> then(Function<T, Try<U>> mapper) {
             return (Try<U>)this;
         }
 

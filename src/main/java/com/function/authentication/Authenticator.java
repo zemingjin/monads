@@ -44,7 +44,7 @@ class Authenticator {
     String getUrl(String userName, String password, String email) {
         return Try.with(() -> authenticateWithUsername(userName, password), handler)
                   .recoverWith(e -> Try.with(() -> authenticateWithEmail(email, password), handler))
-                  .flatMap(user -> Try.with(() -> twoFactor(user, twoFactorPwd), handler))
+                  .then(user -> Try.with(() -> twoFactor(user, twoFactorPwd), handler))
                   .orElse(LOG_IN);
     }
 
